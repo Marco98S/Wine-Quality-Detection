@@ -13,7 +13,7 @@ def load(fname):
     with open(fname) as f:
         for line in f:
             try:
-                attrs = line.split(',')[0:8]
+                attrs = line.split(',')[0:11]
                 attrs = mcol(numpy.array([float(i) for i in attrs]))
                 pulsar = line.split(',')[-1].strip()
                 DList.append(attrs)

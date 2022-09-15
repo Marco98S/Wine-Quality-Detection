@@ -2,24 +2,26 @@ import matplotlib.pyplot as plt
 import seaborn
 import numpy
 
-def plot_hist(D, L):
+def plot_hist(D, L, name):
 
-    print(D)
     D0 = D[:, L==0]
     D1 = D[:, L==1]
 
     hFea = {
-        0 : "Mean of the integrated profile",
-        1 : "Standard deviation of the integrated profile",
-        2 : "Excess kurtosis of the integrated profile",
-        3 : "Skewness of the integrated profile",
-        4 : "Mean of the DM-SNR curve",
-        5 : "Standard deviation of the DM-SNR curve",
-        6 : "Excess kurtosis of the DM-SNR curve",
-        7 : "Skewness of the DM-SNR curve",
+        0 : "fixed acidity",
+        1 : "volatile acidity",
+        2 : "citric acid",
+        3 : "residual sugar",
+        4 : "chlorides",
+        5 : "free sulfur dioxide",
+        6 : "total sulfur dioxide",
+        7 : "density",
+        8 : "pH",
+        9 : "sulphates",
+        10 : "alcohol"
     }
 
-    for dIdx in range(8):
+    for dIdx in range(11):
         plt.figure()
         plt.xlabel(hFea[dIdx])
         plt.hist(D0[dIdx, :], bins = 10, density = True, alpha = 0.4, label = 'negative')
@@ -27,7 +29,7 @@ def plot_hist(D, L):
         
         plt.legend()
         plt.tight_layout() # Use with non-default font size to keep axis label inside the figure
-        #plt.savefig('_hist_%d.pdf'  % dIdx)
+        plt.savefig('plots/analysis/%s_hist_%d_%s.pdf'  % (name, dIdx, hFea[dIdx]))
     plt.show()
 
 
@@ -56,16 +58,12 @@ def plot_scatter(D, L):
         plt.show()
 
 
+def heatmap(D, name, color):
+    plt.figure()
+    pearson_matrix = numpy.corrcoef(D)
+    plt.imshow(pearson_matrix, cmap=color, vmin=-1, vmax=1)
+    plt.savefig("plots/analysis/heatmap_%s.pdf" % name)
 
-
-def heatmap(D, L):
-    plt.figure()
-    seaborn.heatmap(numpy.corrcoef(D), linewidth=0.2, cmap="Greys", square=True, cbar=False)
-    plt.figure()
-    seaborn.heatmap(numpy.corrcoef(D[:, L==0]), linewidth=0.2, cmap="Reds", square=True,cbar=False)
-    plt.figure()
-    seaborn.heatmap(numpy.corrcoef(D[:, L==1]), linewidth=0.2, cmap="Blues", square=True, cbar=False)
-    return 
 
 def plotDCFGMM(x, y, xlabel, name):
     plt.figure()
