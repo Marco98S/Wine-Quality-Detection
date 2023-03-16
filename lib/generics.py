@@ -81,7 +81,7 @@ def confusionMatrix(Pred, Labels, K):
             Conf[i,j] = ((Pred == i) * (Labels == j)).sum()
     return Conf
 
-def Ksplit(D, L, seed=0, K=3):
+def Ksplit(D, L, seed=0, K=5):
     folds = []
     labels = []
     numberOfSamplesInFold = int(D.shape[1]/K)
@@ -93,11 +93,12 @@ def Ksplit(D, L, seed=0, K=3):
         labels.append(L[idx[(i*numberOfSamplesInFold): ((i+1)*(numberOfSamplesInFold))]])
     return folds, labels
 
-def Kfold(D, L, model, mPCA, gauss=True, K=3, prior=0.5, ACT=False,calibrate=False):
+def Kfold(D, L, model, mPCA, gauss=True, K=5, prior=0.5, ACT=False,calibrate=False):    
     folds, labels = Ksplit(D, L, seed=0, K=K)
     
     orderedLabels = []
     scores = []
+    
     for i in range(K):
         trainingSet = []
         labelsOfTrainingSet = []
@@ -127,7 +128,7 @@ def Kfold(D, L, model, mPCA, gauss=True, K=3, prior=0.5, ACT=False,calibrate=Fal
     labels = numpy.hstack(labels)
     minimum_DCF = lib.dcfFun.minimum_detection_costs(scores, orderedLabels, prior, 1, 1)
     if(calibrate):
-        act_dcf = calibrateScores(scores, orderedLabels, 1e-5, prior)
+        act_dcf = calibrateScores(scores, orderedLabels, 1e-2, prior)
         return minimum_DCF, act_dcf
     if(not ACT):
         return minimum_DCF
